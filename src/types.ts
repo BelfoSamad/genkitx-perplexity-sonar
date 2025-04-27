@@ -35,9 +35,8 @@ export type SonarRequestBody = {
     search_recency_filter: string; //day, month, year
 
     response_format: {
-        type: 'json_schema' | 'regex';
+        type: 'json_schema' | 'text';
         json_schema?: { schema: string };
-        regex?: { regex: string };
     };
     presence_penalty?: number;
     frequency_penalty?: number;

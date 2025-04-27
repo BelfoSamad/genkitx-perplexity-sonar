@@ -17,7 +17,7 @@
     "check": "tsc",
     "compile": "tsup-node",
     "build:clean": "rm -rf ./lib",
-    "build": "npm-run-all build:clean check compile",
+    "build": "npm-run-all check compile",
     "build:watch": "tsup-node --watch",
     "test": "jest --coverage"
   },

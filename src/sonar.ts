@@ -21,11 +21,15 @@ import {
 import axios from "axios";
 
 export const PerplexitySonarConfigSchema = GenerationCommonConfigSchema.extend({
-    searchDomainFilter: z.array(z.string()).optional(),
-    searchBeforeDateFilter: z.string().optional(),
-    searchAfterDateFilter: z.string().optional(),
-    searchRecencyFilter: z.enum(['day', 'month', 'year']).optional(),
-    searchContextSize: z.enum(['low', 'medium', 'high']).optional(),
+    search_domain_filter: z.array(z.string()).optional(),
+    search_before_date_filter: z.string().optional(),
+    search_after_date_filter: z.string().optional(),
+    search_recency_filter: z.enum(['day', 'month', 'year']).optional(),
+    search_context_size: z.enum(['low', 'medium', 'high']).optional(),
+});
+
+export const PerplexitySonarResponseSchema = GenerationCommonConfigSchema.extend({
+   citations: z.array(z.string()).optional()
 });
 
 export const sonar = modelRef({
@@ -148,7 +152,7 @@ export function toSonarTextAndMedia(part: Part): SonarTextMessage | SonarImageMe
     if (part.media) {
         return {
             type: 'image_url',
-            image_url: {url: part.media.url} //TODO: Transfer to base64?
+            image_url: {url: part.media.url}
         }
     }
 
@@ -192,11 +196,8 @@ export function toSonarRequestBody(modelName: string, request: GenerateRequest<t
             type: 'json_object',
             json_object: {schema: request.output?.schema?.toString() || '{}'}
         };
-    } else if (response_type === 'regex' && model.info?.supports?.output?.includes('regex')) {
-        response_format = {
-            type: 'regex',
-            regex: {regex: request.output?.schema?.toString()} //TODO: handle regex situation
-        }
+    } else if (response_type === 'text' && model.info?.supports?.output?.includes('text')) {
+        response_format = {type: 'text'}
     } else throw new Error(`${response_type} format is not supported for ${modelName} currently`);
 
     const body: SonarRequestBody = {
@@ -208,13 +209,13 @@ export function toSonarRequestBody(modelName: string, request: GenerateRequest<t
         top_k: request.config?.topK ?? 0,
         return_images: false,
         return_related_questions: false,
-        search_domain_filter: request.config?.searchDomainFilter ?? [],
+        search_domain_filter: request.config?.search_domain_filter ?? [],
         web_search_options: {
-            search_context_size: request.config?.searchContextSize ?? 'low'
+            search_context_size: request.config?.search_context_size ?? 'low'
         },
-        search_before_date_filter: request.config?.searchBeforeDateFilter ?? '',
-        search_after_date_filter: request.config?.searchAfterDateFilter ?? '',
-        search_recency_filter: request.config?.searchRecencyFilter ?? '',
+        search_before_date_filter: request.config?.search_before_date_filter ?? '',
+        search_after_date_filter: request.config?.search_after_date_filter ?? '',
+        search_recency_filter: request.config?.search_recency_filter ?? '',
         response_format: response_format,
         stream: false // NOTE: CURRENTLY STREAMING IS NOT SUPPORTED
     }
