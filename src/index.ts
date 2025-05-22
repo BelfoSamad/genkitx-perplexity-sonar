@@ -23,7 +23,6 @@ export {
 
 export interface PluginOptions {
     apiKey?: string;
-    // TODO: add additional options supported by the Perplexity Sonar API
 }
 
 export const perplexitySonar = (options: PluginOptions) => genkitPlugin('sonar', async (ai: Genkit) => {

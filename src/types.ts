@@ -28,18 +28,25 @@ export type SonarRequestBody = {
     return_images: boolean;
     return_related_questions: boolean;
 
-    search_domain_filter: string[];
-    web_search_options: { search_context_size: string }; //low, medium, high
-    search_before_date_filter: string;
-    search_after_date_filter: string;
-    search_recency_filter: string; //day, month, year
+    search_domain_filter?: string[];
+    web_search_options: {
+        search_context_size: string, //low, medium, high
+        user_location?: {
+            latitude?: number;
+            longitude?: number;
+            country?: string;
+        }
+    };
+    search_before_date_filter?: string;
+    search_after_date_filter?: string;
+    search_recency_filter?: string; //day, month, year
 
     response_format: {
         type: 'json_schema' | 'text';
         json_schema?: { schema: string };
     };
-    presence_penalty?: number;
-    frequency_penalty?: number;
+    presence_penalty: number;
+    frequency_penalty: number;
     stop_sequences?: string[];
     stream: boolean;
 }

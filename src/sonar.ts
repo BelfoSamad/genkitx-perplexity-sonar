@@ -19,17 +19,28 @@ import {
     SonarTextMessage
 } from "./types";
 import axios from "axios";
+import {formatDate} from "./tools";
 
 export const PerplexitySonarConfigSchema = GenerationCommonConfigSchema.extend({
-    search_domain_filter: z.array(z.string()).optional(),
-    search_before_date_filter: z.string().optional(),
-    search_after_date_filter: z.string().optional(),
+    allowed_search_domain_filter: z.array(z.string()).optional(),
+    denied_search_domain_filter: z.array(z.string()).optional(),
+    search_before_date_filter: z.date().optional(),
+    search_after_date_filter: z.date().optional(),
     search_recency_filter: z.enum(['day', 'month', 'year']).optional(),
     search_context_size: z.enum(['low', 'medium', 'high']).optional(),
+    results_with_images: z.boolean().optional(),
+    results_with_related_questions: z.boolean().optional(),
+    presence_penality: z.number().optional(),
+    frequency_penalty: z.number().optional(),
+    user_location: z.object({
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
+        country: z.string().optional(),
+    }).optional()
 });
 
 export const PerplexitySonarResponseSchema = GenerationCommonConfigSchema.extend({
-   citations: z.array(z.string()).optional()
+    citations: z.array(z.string()).optional()
 });
 
 export const sonar = modelRef({
@@ -71,7 +82,7 @@ export const sonarReasoning = modelRef({
             tools: false,
             media: true,
             systemRole: true,
-            output: ['text', 'json']
+            output: ['text'] // TODO: allow json with consideration of <think></think>
         }
     },
     configSchema: PerplexitySonarConfigSchema,
@@ -86,7 +97,7 @@ export const sonarReasoningPro = modelRef({
             tools: false,
             media: true,
             systemRole: true,
-            output: ['text', 'json']
+            output: ['text'] // TODO: allow json with consideration of <think></think>
         }
     },
     configSchema: PerplexitySonarConfigSchema,
@@ -98,8 +109,8 @@ export const sonarDeepResearch = modelRef({
         label: 'Perplexity - Sonar Deep Research',
         supports: {
             multiturn: true,
-            tools: true,
-            media: true,
+            tools: false,
+            media: false,
             systemRole: true,
             output: ['text', 'json']
         }
@@ -199,7 +210,33 @@ export function toSonarRequestBody(modelName: string, request: GenerateRequest<t
     } else if (response_type === 'text' && model.info?.supports?.output?.includes('text')) {
         response_format = {type: 'text'}
     } else throw new Error(`${response_type} format is not supported for ${modelName} currently`);
+    //TODO: Add Regex Support
 
+    // prepare search_domain_filter
+    const search_domain_filter = (request.config?.allowed_search_domain_filter ?? []).concat(
+        (request.config?.denied_search_domain_filter ?? []).map(domain => `-${domain}`)
+    ).map(domain => domain.replace("https://", "").replace("http://", "").replace("www.", ""));
+    if (search_domain_filter.length > 10) throw new Error("Maximum 10 domain filter is allowed.");
+
+    // prepare user location
+    let user_location: { latitude?: number; longitude?: number; country?: string; } | undefined;
+    if (request.config?.user_location) {
+        if ('latitude' in request.config.user_location && 'longitude' in request.config.user_location) {
+            user_location = {
+                latitude: request.config.user_location.latitude,
+                longitude: request.config.user_location.longitude
+            };
+        }
+
+        if ('country' in request.config.user_location) {
+            user_location = user_location ? {
+                country: request.config.user_location.country,
+                ...user_location
+            } : {country: request.config.user_location.country};
+        }
+    }
+
+    // Request Body
     const body: SonarRequestBody = {
         model: modelName,
         messages: toSonarMessages(request.messages),
@@ -207,15 +244,18 @@ export function toSonarRequestBody(modelName: string, request: GenerateRequest<t
         temperature: request.config?.temperature ?? 0.2,
         top_p: request.config?.topP ?? 0.9,
         top_k: request.config?.topK ?? 0,
-        return_images: false,
-        return_related_questions: false,
-        search_domain_filter: request.config?.search_domain_filter ?? [],
+        presence_penalty: request.config?.presence_penality ?? 0,
+        frequency_penalty: request.config?.frequency_penalty ?? 1,
+        return_images: request.config?.results_with_images ?? false,
+        return_related_questions: request.config?.results_with_related_questions ?? false,
+        search_domain_filter: search_domain_filter,
         web_search_options: {
-            search_context_size: request.config?.search_context_size ?? 'low'
+            search_context_size: request.config?.search_context_size ?? 'low',
+            user_location: user_location
         },
-        search_before_date_filter: request.config?.search_before_date_filter ?? '',
-        search_after_date_filter: request.config?.search_after_date_filter ?? '',
-        search_recency_filter: request.config?.search_recency_filter ?? '',
+        search_before_date_filter: formatDate(request.config?.search_before_date_filter),
+        search_after_date_filter: formatDate(request.config?.search_after_date_filter),
+        search_recency_filter: request.config?.search_recency_filter,
         response_format: response_format,
         stream: false // NOTE: CURRENTLY STREAMING IS NOT SUPPORTED
     }
