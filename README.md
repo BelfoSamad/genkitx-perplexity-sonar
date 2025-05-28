@@ -1,4 +1,4 @@
-![Firebase Genkit + Anthropic AI](https://github.com/BelfoSamad/genkitx-perplexity-sonar/blob/assets/genkitx-perplexity-sonar.png?raw=true)
+![Firebase Genkit + Anthropic AI](https://github.com/BelfoSamad/genkitx-perplexity-sonar/blob/master/assets/genkitx-perplexity-sonar.png?raw=true)
 
 <h1 align="center">Firebase Genkit <> Sonar AI Plugin</h1>
 
