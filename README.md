@@ -60,7 +60,36 @@ const response = await ai.generate({
 console.log(response.text);
 ```
 
-### Within a flow
+### Configurations
+
+You can check the official documentations [Here](https://docs.perplexity.ai/home) for more details about the API.
+
+```typescript
+const response = await ai.generate({
+    model: sonar, // model imported from 
+    prompt: 'Tell me a joke.',
+    config: {
+        // check https://docs.perplexity.ai/guides/search-domain-filters for more details
+        allowed_search_domain_filter: ["https://www.domain1.com", "domain2.com"], // allowed domain names, https:// and www are removed automatically
+        denied_search_domain_filter: ["domain3.con", "domain4.com"], // denied list, it will automatically add - before the domain name
+        // check https://docs.perplexity.ai/guides/date-range-filter-guide for more details
+        search_before_date_filter: new Date(),
+        search_after_date_filter: new Date(),
+        search_recency_filter: "month",
+        // check https://docs.perplexity.ai/guides/search-context-size-guide for more details
+        search_context_size: "low",
+        // check https://docs.perplexity.ai/guides/user-location-filter-guide for more etails
+        user_location: {
+            country: "DZ",
+            latitude: 12.2,
+            longitude: 12.2,
+        },
+        // other configurarions
+        results_with_images: false,
+        results_with_related_questions: false,
+    }
+});
+```
 
 
 ## Contributing
