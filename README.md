@@ -1,14 +1,14 @@
-![Firebase Genkit + Anthropic AI](https://github.com/BelfoSamad/genkitx-perplexity-sonar/blob/main/assets/genkitx-perplexity-sonar.png?raw=true)
+![Firebase Genkit + Anthropic AI](https://github.com/BelfoSamad/genkitx-perplexity-sonar/blob/assets/genkitx-perplexity-sonar.png?raw=true)
 
 <h1 align="center">Firebase Genkit <> Sonar AI Plugin</h1>
 
 <h4 align="center">Perplexity's Sonar API Community Plugin for Google Firebase Genkit</h4>
 
 <div align="center">
-   <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/BelfoSamad/?label=version">
+   <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/BelfoSamad/genkitx-perplexity-sonar?label=version">
    <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-perplexity-sonar">
    <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/BelfoSamad?style=social">
-   <img alt="GitHub License" src="https://img.shields.io/github/license/BelfoSamad/">
+   <img alt="GitHub License" src="https://img.shields.io/github/license/BelfoSamad/genkitx-perplexity-sonar">
    <img alt="Static Badge" src="https://img.shields.io/badge/yes-a?label=maintained">
 </div>
 
