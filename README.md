@@ -5,7 +5,7 @@
 <h4 align="center">Perplexity's Sonar API Community Plugin for Google Firebase Genkit</h4>
 
 <div align="center">
-   <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/BelfoSamad/genkitx-perplexity-sonar?label=version">
+   <img alt="npm version" src="https://img.shields.io/npm/v/genkitx-perplexity-sonar">
    <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-perplexity-sonar">
    <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/BelfoSamad?style=social">
    <img alt="GitHub License" src="https://img.shields.io/github/license/BelfoSamad/genkitx-perplexity-sonar">
